@@ -1,1 +1,2 @@
-# TorPDF is a PDF editor. It works with Windows, Linux and Mac.
+# TorPDF 
+TorPDF is a PDF editor for Windows, Linux and Mac OS.
