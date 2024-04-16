@@ -1,6 +1,12 @@
 # Overview
 TorPDF is a versatile open-source PDF editor created by a 15-year-old high-school student using the Python programming language. This project provides essential functionality for managing PDF documents, including merging, splitting, conversion between various formats, rotating, cropping, and inserting pages.
 
+![Static Badge](https://img.shields.io/badge/python-PDF-blue?logo=python)
+![Static Badge](https://img.shields.io/badge/IDE-Jupyter-blue)
+![Static Badge](https://img.shields.io/badge/requirements-OS/PIL/pypdf2-red)
+![Static Badge](https://img.shields.io/badge/Version-1.0-green)
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FKreytorn%2Fhit-counter&count_bg=%2379C83D&title_bg=%23555555&icon=macys.svg&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
+
 # Features
 - Merge PDF Documents: Combine multiple PDF files into a single document effortlessly.
 - Split PDF Documents: Divide large PDF files into smaller, more manageable sections.
