@@ -27,6 +27,7 @@ TXT to PDF
 - Rotate PDF Pages: Change the orientation of pages within a PDF document.
 - Crop PDF Pages: Remove unnecessary margins or white spaces from PDF pages.
 - Insert Pages: Seamlessly add new pages to an existing PDF document.
+- Insert Page numbers: Add page numbers to your PDF files.
 
 # Platform Compatibility
 TorPDF is compatible with Windows, Linux, and Mac operating systems.
