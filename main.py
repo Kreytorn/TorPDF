@@ -25,6 +25,7 @@ from reportlab.pdfgen import canvas
 from tkinter import filedialog, messagebox
 
 
+# merge_pdfs
 def merge_pdfs(pdf_paths, output_folder):
     pdf_writer = PyPDF2.PdfWriter()
 
@@ -47,6 +48,7 @@ def merge_pdfs(pdf_paths, output_folder):
     return output_path
 
 
+# split_pdf
 def split_pdf(pdf_path, page_ranges, output_folder):
     page_ranges_list = page_ranges.split(",")
     pdf_reader = PyPDF2.PdfReader(pdf_path)
@@ -125,8 +127,8 @@ def convert_file_name(file_name, file_type, page_number=None):
     return f"{file_name}{conversion_keyword}{file_type}{'_page' + str(page_number) if page_number else ''}"
 
 
+# convert to from Word
 def convert_to_opposite_format(input_file, output_folder):
-    """Converts a file to the opposite format (DOCX to PDF or PDF to DOCX), handling file naming."""
     try:
         file_name, file_extension = os.path.splitext(os.path.basename(input_file))
         output_file = output_folder
@@ -136,6 +138,10 @@ def convert_to_opposite_format(input_file, output_folder):
                 output_file, convert_file_name(file_name, "PDF") + ".pdf"
             )
             convert(input_file, output_path)
+            messagebox.showinfo(
+                "Conversion Successful",
+                f"File converted to PDF and saved to: {output_path}",
+            )
             print(f"Conversion successful: {input_file} to {output_path}")
 
         elif file_extension.lower() == ".pdf":
@@ -168,6 +174,10 @@ def convert_to_opposite_format(input_file, output_folder):
 
             # Save the DOCX document
             doc.save(output_path)
+            messagebox.showinfo(
+                "Conversion Successful",
+                f"File converted to Word and saved to: {output_path}",
+            )
             print(f"Conversion successful: {input_file} to {output_path}")
 
         else:
@@ -217,7 +227,11 @@ def convert_excelpdf(input_file, output_folder):
             pdf.savefig(fig, bbox_inches="tight")
 
         plt.close()
-        print(f"Conversion successful: {input_file} to {output_file}")
+
+        messagebox.showinfo(
+            "Conversion Successful",
+            f"File converted to PDF and saved to: {output_file}",
+        )
 
     elif input_file.lower().endswith(".pdf"):
         # Convert PDF to Excel
@@ -229,10 +243,16 @@ def convert_excelpdf(input_file, output_folder):
             f"{os.path.splitext(os.path.basename(input_file))[0]}_converted_to_Excel.xlsx",
         )
         df.to_excel(output_file, index=False)
-        print(f"Conversion successful: {input_file} to {output_file}")
+
+        messagebox.showinfo(
+            "Conversion Successful",
+            f"File converted to Excel and saved to: {output_file}",
+        )
 
     else:
-        print(f"Unsupported file type: {input_file}")
+        messagebox.showerror(
+            "Unsupported File Type", f"Unsupported file type: {input_file}"
+        )
 
 
 # Convert to from PDF PPTX
@@ -253,34 +273,44 @@ def convert_file(input_file, output_folder):
 
 
 def convert_pdf_to_pptx(input_pdf, output_pptx):
-    presentation = Presentation()
-    pdf_document = fitz.open(input_pdf)
+    try:
+        presentation = Presentation()
+        pdf_document = fitz.open(input_pdf)
 
-    for page_number in range(pdf_document.page_count):
-        page = pdf_document[page_number]
-        text = page.get_text()
+        for page_number in range(pdf_document.page_count):
+            page = pdf_document[page_number]
+            text = page.get_text()
 
-        slide = presentation.slides.add_slide(presentation.slide_layouts[5])
+            slide = presentation.slides.add_slide(presentation.slide_layouts[5])
 
-        text_box = slide.shapes.add_textbox(
-            left=Inches(1), top=Inches(1), width=Inches(8), height=Inches(5)
+            text_box = slide.shapes.add_textbox(
+                left=Inches(1), top=Inches(1), width=Inches(8), height=Inches(5)
+            )
+            text_frame = text_box.text_frame
+            text_frame.text = text
+
+        presentation.save(output_pptx)
+        messagebox.showinfo(
+            "Conversion Successful", f"{input_pdf} converted to PowerPoint."
         )
-        text_frame = text_box.text_frame
-        text_frame.text = text
-
-    presentation.save(output_pptx)
+    except Exception as e:
+        messagebox.showerror("Conversion Error", f"An error occurred: {e}")
 
 
 def convert_ppt_to_pdf(input_pptx, output_pdf):
-    powerpoint = comtypes.client.CreateObject("PowerPoint.Application")
-    powerpoint.Visible = True
+    try:
+        powerpoint = comtypes.client.CreateObject("PowerPoint.Application")
+        powerpoint.Visible = True
 
-    presentation = powerpoint.Presentations.Open(input_pptx)
+        presentation = powerpoint.Presentations.Open(input_pptx)
 
-    presentation.ExportAsFixedFormat(output_pdf, 32)  # 32 for PDF
+        presentation.ExportAsFixedFormat(output_pdf, 32)  # 32 for PDF
 
-    presentation.Close()
-    powerpoint.Quit()
+        presentation.Close()
+        powerpoint.Quit()
+        messagebox.showinfo("Conversion Successful", f"{input_pptx} converted to PDF.")
+    except Exception as e:
+        messagebox.showerror("Conversion Error", f"An error occurred: {e}")
 
 
 def ppt_pdf(input_path, output_path):
@@ -454,6 +484,7 @@ def convert_png_pdf(input_file, output_folder):
         print(f"Conversion failed: {e}")
 
 
+# add more file types or all files
 def select_files():
     files = filedialog.askopenfilenames(
         filetypes=[("PDF Files", "*.pdf"), ("Excel Files", "*.xls;*.xlsx")]
@@ -512,6 +543,19 @@ def convert_to_pdf_or_jpeg(input_file, output_folder):
         print(f"Conversion failed: {e}")
 
 
+def merge_files():
+    pdf_paths = listbox_files.get(0, tk.END)
+    output_folder = filedialog.askdirectory()
+    if pdf_paths and output_folder:
+        merged_pdf_path = merge_pdfs(pdf_paths, output_folder)
+        # Extracting file names from paths
+        file_names = [os.path.basename(pdf_path) for pdf_path in pdf_paths]
+        messagebox.showinfo(
+            "Merge PDFs",
+            f"Merged PDF Files ({', '.join(file_names)}) saved to: {merged_pdf_path}",
+        )
+
+
 def split_file():
     pdf_path = listbox_files.get(tk.ACTIVE)
     page_ranges = entry_page_ranges.get()
@@ -519,7 +563,12 @@ def split_file():
     if pdf_path and page_ranges and output_folder:
         result = split_pdf(pdf_path, page_ranges, output_folder)
         if result == "Success":
-            messagebox.showinfo("Split PDF", "PDF split successfull")
+            # Extracting file name from path
+            file_name = os.path.basename(pdf_path)
+            messagebox.showinfo(
+                "Split PDF",
+                f"Split PDF files {file_name} saved to: " + output_folder,
+            )
         else:
             messagebox.showerror("Split PDF Error", result)
 
@@ -635,6 +684,15 @@ menubar.add_cascade(label="Edit", menu=edit_menu)
 edit_menu.add_command(label="Merge", command=merge_files)
 edit_menu.add_command(label="Split", command=split_file)
 edit_menu.add_separator()
+edit_menu.add_command(label="PDF<-->Word", command=merge_files)
+edit_menu.add_command(label="PDF<-->Excel", command=merge_files)
+edit_menu.add_command(label="PDF<-->PPT", command=merge_files)
+edit_menu.add_command(label="PDF<-->RTF", command=merge_files)
+edit_menu.add_command(label="PDF<-->RTF", command=merge_files)
+edit_menu.add_separator()
+edit_menu.add_command(label="PDF<-->JPEG", command=merge_files)
+edit_menu.add_command(label="PDF<-->PNG", command=merge_files)
+edit_menu.add_separator()
 edit_menu.add_command(label="Clear", command=clear_files)
 
 # Tools menu
@@ -670,13 +728,12 @@ label_version = tk.Label(frame_menu, text="Version 1.0", bg="black", fg="white")
 label_version.pack(side=tk.TOP)
 
 # left frame with buttons
-
 button_select = tk.Button(
     frame_menu,
     text="Select Files to\n Merge or Split",
     bg="burlywood3",
     fg="black",
-    command=select_files,  # to be updated
+    command=select_files,
     width=13,
 )
 button_select.pack(pady=(50, 10), padx=20)
@@ -742,7 +799,7 @@ button_pdftortf = tk.Button(
     text="PDF <--> Rtf",
     bg="cadetblue1",
     fg="black",
-    command=convert_to_pdf_or_rtf,  # to be updated
+    command=convert_to_pdf_or_rtf,
     width=13,
 )
 button_pdftortf.pack(pady=10, padx=20)
@@ -769,7 +826,6 @@ button_pdftojpg = tk.Button(
 )
 button_pdftojpg.pack(pady=10, padx=20)
 
-# PDF to PNG (jpeg, png)
 # PDF to PNG (png, pdf)
 button_pdftopng = tk.Button(
     frame_menu,
@@ -780,7 +836,6 @@ button_pdftopng = tk.Button(
     width=13,
 )
 button_pdftopng.pack(pady=10, padx=20)
-
 
 # right frame with how to use
 frame_files = tk.Frame(root, bg="black")
@@ -796,39 +851,41 @@ link_label = tk.Label(frame_files, text="Visit us!", fg="blue", cursor="hand2")
 link_label.pack(pady=(0, 20))
 link_label.bind("<Button-1>", open_link)
 
-
 # Create a Text widget for explanations
 text_explanations = tk.Text(
     root, bg="black", fg="white", wrap="word", width=10, font=("Helvetica", 10)
 )
 text_explanations.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-# Insert explanations for Merge and Split
-text_explanations.insert(tk.END, "HOW TO USE TORPDF?\n\n")
+# Insert explanations into the Text widget
 text_explanations.insert(
     tk.END,
-    "Select Files: \nIf you want to merge or split files, you need to select files first. This will insert them in the list. After that, you can choose Merge or Split.\n\n",
+    "HOW TO USE TORPDF?\n\nTORPDF is a PDF management tool.\nBelow is a short guide to effectively utilize TORPDF's features.\n\n",
 )
 text_explanations.insert(
     tk.END,
-    "Merge: \nLets you create a single PDF file. Select different PDF files and create a one single PDF file.\n\n",
+    "Select Files: \nBegin by selecting the files you wish to manipulate. Whether merging or splitting files, this initial step populates the file list. Once files are selected, proceed to either the Merge or Split functions.\n\n",
 )
 text_explanations.insert(
     tk.END,
-    "Split: \nSeparates a file into multiple PDFs. Use range function to adjust how to split, extract pages.\n\n",
+    "Merge: \nCombine multiple PDFs into one. Use range function to adjust how to merge, extract pages.\n\n",
 )
 text_explanations.insert(
     tk.END,
-    "Convert to PDF:\nConvert your the following files to PDF: (.docx,. xls, .ppt, .txt, .rtf, .odf, .odt, .ods, .jpeg, .png files to PDF.).\n\n",
+    "Split: \nSplit a PDF into multiple files. Use range function to adjust how to split, extract pages.\n\n",
 )
 text_explanations.insert(
     tk.END,
-    "Convert from  PDF:\nConvert your PDF to following file formats: (.docx,. xls, .ppt, .txt, .rtf, .odf, .odt, .ods, jpeg, .png files to PDF.).\n\n",
+    "Convert to PDF:\nConvert your files to following file formats: (.docx,. xlsx, .ppxt, .txt, .rtf, .odf, .odt, .ods, .jpeg, .png files to PDF.).\n\n",
+)
+text_explanations.insert(
+    tk.END,
+    "Convert from  PDF:\nConvert your files from following file formats: (.docx,. xlsx, .pptx, .txt, .rtf, .odf, .odt, .ods, jpeg, .png files to PDF.).\n\n",
 )
 
 text_explanations.insert(
     tk.END,
-    "Wiki Pages & Documentation & Contact:\nFor more information: \nhttps://github.com/Kreytorn/TorPDF/wiki \n\nFor documentation:\nhttps://github.com/Kreytorn/TorPDF.\n\n",
+    "WIKI PAGES & DOCUMENTATION & CONTACT:?\n\nFor more information: \nhttps://github.com/Kreytorn/TorPDF/wiki \n\nFor documentation:\nhttps://github.com/Kreytorn/TorPDF.\n\nForums and questions:\nhttps://github.com/Kreytorn/TorPDF/discussions\n\nContact us:\nhttps://github.com/Kreytorn/TorPDF/issues",
 )
 
 root.mainloop()
