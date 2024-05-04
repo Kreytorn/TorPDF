@@ -838,7 +838,7 @@ button_pdftopng = tk.Button(
 button_pdftopng.pack(pady=10, padx=20)
 
 # right frame with how to use
-frame_files = tk.Frame(root, bg="black")
+frame_files = tk.Frame(root, bg="burlywood3")
 frame_files.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
 button_clear = tk.Button(frame_files, text="Clear Files", command=clear_files)
@@ -853,7 +853,12 @@ link_label.bind("<Button-1>", open_link)
 
 # Create a Text widget for explanations
 text_explanations = tk.Text(
-    root, bg="black", fg="white", wrap="word", width=10, font=("Helvetica", 10)
+    root,
+    bg="black",
+    fg="white",
+    wrap="word",
+    width=10,
+    font=("Calibri", 11),
 )
 text_explanations.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=20, pady=20)
 
