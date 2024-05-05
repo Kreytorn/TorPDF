@@ -678,7 +678,7 @@ file_menu.add_command(label="Çıkış", command=root.quit)
 
 # Edit menü
 edit_menu = tk.Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Edit", menu=edit_menu)
+menubar.add_cascade(label="Düzenle", menu=edit_menu)
 edit_menu.add_command(label="Birleştir", command=merge_files)
 edit_menu.add_command(label="Ayır", command=split_file)
 edit_menu.add_separator()
@@ -897,6 +897,5 @@ text_explanations.insert(
     tk.END,
     "WIKI SAYFALARI & BELGELER & İLETİŞİM:\n\nDaha fazla bilgi için: \nhttps://github.com/Kreytorn/TorPDF/wiki \n\nBelgeler için:\nhttps://github.com/Kreytorn/TorPDF.\n\nForumlar ve sorular:\nhttps://github.com/Kreytorn/TorPDF/discussions\n\nBize ulaşın:\nhttps://github.com/Kreytorn/TorPDF/issues",
 )
-
 
 root.mainloop()
