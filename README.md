@@ -1,5 +1,5 @@
 # Overview
-TorPDF is a versatile open-source PDF editor created by a 15-year-old high-school student using the Python programming language. This project provides essential functionality for managing PDF documents, including merging, splitting, conversion between various formats, rotating, cropping, and inserting pages.
+TorPDF is a versatile open-source PDF editor created by a high-school student using the Python programming language. This project provides essential functionality for managing PDF documents, including merging, splitting, conversion between various formats, rotating, cropping, and inserting pages.
 
 ![Static Badge](https://img.shields.io/badge/python-PDF-blue?logo=python)
 ![Static Badge](https://img.shields.io/badge/IDE-Jupyter-blue)
